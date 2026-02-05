@@ -3,12 +3,12 @@ package gootils.git
 import java.time.ZonedDateTime
 
 class PullRequest {
-	int id
+	long id
 	String title
 	String url
 	ZonedDateTime merged = null
 
-	PullRequest(int id, String title, String url, String merged) {
+	PullRequest(long id, String title, String url, String merged) {
 		this.id = id
 		this.title = title
 		this.url = url
