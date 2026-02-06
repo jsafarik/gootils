@@ -13,7 +13,7 @@ class Gitlab {
 	}
 
 	def get(String path) {
-		return Shell.sh("curl --silent --header PRIVATE-TOKEN:${token} ${url}/api/v4${path}", false)
+		return Shell.sh(["curl", "--silent", "--header", "PRIVATE-TOKEN:${token}", "${url}/api/v4${path}"], false)
 	}
 
 	def getAllMRs(String username) {
