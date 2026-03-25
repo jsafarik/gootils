@@ -19,24 +19,24 @@ class Jira {
 			"curl",
 			"--silent",
 			"--request", "GET",
-			"--url", "${server}/rest/api/2${path}",
-			"--header", "Authorization: Bearer ${token}",
+			"--url", "${server}/rest/api/3${path}",
+			"--header", "Authorization: Basic ${token}",
 			"--header", "Content-Type:application/json"
 		], false)
 	}
 
 	def getAllJirasOfUser(String username) {
-		int i = 0
 		def issues = []
+		String nextPageToken = ""
 		while (true) {
 			def response = Json.readJson(
-				this.get("/search?jql=" +
+				this.get("/search/jql?jql=" +
 					URLEncoder.encode("assignee = \"${username}\" ORDER BY updated DESC", StandardCharsets.UTF_8) +
-					"&startAt=${i}&maxResults=100&fields=key,priority,summary,issuetype,status,creator,resolutiondate")
+					"&maxResults=5000&fields=key,priority,summary,issuetype,status,creator,resolutiondate" + (nextPageToken ? "&nextPageToken=${nextPageToken}" : ""))
 			)
 
-			if (response.issues.size() == 0) {
-				break
+			if (response.nextPageToken) {
+				nextPageToken = response.nextPageToken
 			}
 
 			issues.addAll(response.issues.collect {
@@ -52,7 +52,10 @@ class Jira {
 				)
 			})
 
-			i += 100;
+
+			if (response.isLast == true) {
+				break
+			}
 		}
 		return issues
 	}
